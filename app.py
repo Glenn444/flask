@@ -1,11 +1,25 @@
 from flask import Flask
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import  generate_password_hash, check_password_hash
 from email.message import EmailMessage
 import smtplib
 from scholarly import scholarly, ProxyGenerator
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
+
+users = {
+    "glen": generate_password_hash("hello"),
+}
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and \
+            check_password_hash(users.get(username), password):
+        return username
 
 @app.route('/')
+@auth.login_required
 def check_google_scholar():
     pg = ProxyGenerator()
     success = pg.ScraperAPI("c80dc3c0a8fccc86a06da4cdaea21406")
@@ -20,7 +34,7 @@ def check_google_scholar():
     # Function to send an email
     def send_email(subject, body):
         EmailAdd = "notifications@tobitresearchconsulting.com"
-        Pass = "Tobitit2024"
+        Pass = "Tobitit2025"
 
         msg = EmailMessage()
         msg['Subject'] = subject
