@@ -1,15 +1,19 @@
 from flask import Flask
+from dotenv import load_dotenv
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import  generate_password_hash, check_password_hash
 from email.message import EmailMessage
 import smtplib
 from scholarly import scholarly, ProxyGenerator
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 
 users = {
-    "glen": generate_password_hash("hello"),
+    os.getenv("USERNAME"): generate_password_hash(os.getenv("PASSWORD")),
 }
 
 @auth.verify_password
@@ -22,7 +26,7 @@ def verify_password(username, password):
 @auth.login_required
 def check_google_scholar():
     pg = ProxyGenerator()
-    success = pg.ScraperAPI("c80dc3c0a8fccc86a06da4cdaea21406")
+    success = pg.ScraperAPI(os.getenv("SCRAPER_API"))
     scholarly.use_proxy(pg)
 
     # Function to check if journals or articles from "stratfordjournals.com" exist
@@ -33,13 +37,13 @@ def check_google_scholar():
 
     # Function to send an email
     def send_email(subject, body):
-        EmailAdd = "notifications@tobitresearchconsulting.com"
-        Pass = "Tobitit2025"
+        EmailAdd = os.getenv("SENDER_EMAIL")
+        Pass = os.getenv("SENDER_PASS")
 
         msg = EmailMessage()
         msg['Subject'] = subject
         msg['From'] = EmailAdd
-        msg['To'] = 'gmark1586@gmail.com', 'glennmakhandia@gmail.com'
+        msg['To'] = os.getenv("EMAIL1"), os.getenv("EMAIL2")
         msg.set_content(body)
 
         with smtplib.SMTP_SSL('tobitresearchconsulting.com', 465) as smtp:
