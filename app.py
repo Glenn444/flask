@@ -14,8 +14,8 @@ load_dotenv()
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 
-username = os.getenv("USERNAME")
-password = os.getenv("PASSWORD")
+username = os.getenv("USERNAME",'default_user')
+password = os.getenv("PASSWORD",'default_pass')
 
 if not username or not password:
     raise ValueError("USERNAME and PASSWORD environment variables must be set in .env file")
