@@ -17,6 +17,9 @@ auth = HTTPBasicAuth()
 username = os.getenv("USERNAME",'default_user')
 password = os.getenv("PASSWORD",'default_pass')
 
+print(f"Loaded username: {username}")
+print(f"Password exists: {bool(password)}")
+
 if not username or not password:
     raise ValueError("USERNAME and PASSWORD environment variables must be set in .env file")
 
